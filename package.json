@@ -1,0 +1,36 @@
+{
+  "name": "start-webpack-new",
+  "version": "1.0.0",
+  "description": "my temp",
+  "main": "index.js",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "babel-loader": "^9.2.1",
+    "copy-webpack-plugin": "^14.0.0",
+    "css-loader": "^7.1.4",
+    "eslint": "^10.3.0",
+    "express": "^5.2.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.6.4",
+    "mini-css-extract-plugin": "^2.9.4",
+    "sass": "^1.77.0",
+    "sass-loader": "^16.0.6",
+    "serve": "^14.2.4",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.106.2",
+    "webpack-cli": "^7.0.2",
+    "webpack-dev-server": "^5.2.3"
+  },
+  "scripts": {
+    "dev": "webpack-dev-server --mode development --config webpack.config.js",
+    "build": "node --max-old-space-size=12288 ./node_modules/webpack/bin/webpack.js --mode production --config webpack.config.js --bail",
+    "build:map": "node --max-old-space-size=12288 ./node_modules/webpack/bin/webpack.js --mode production --config webpack.config.js --bail --env sourceMap=1",
+    "preview": "serve -l 8080 dist"
+  },
+  "author": "Gaida",
+  "license": "MIT"
+}
