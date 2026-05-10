@@ -20,6 +20,9 @@ module.exports = (env, argv) => {
             env.sourceMap === '1' ||
             env.sourceMap === 1);
 
+    /** Maps bundled `app.css` back to `style.css`, `respons.css`, etc. in DevTools (dev always; prod with `npm run build:map`). */
+    const useCssSourceMap = !isProduction || prodSourceMap;
+
     /** Leave root-absolute URLs as-is (any domain; assets served from site `/img/`, etc.). */
     const cssLoaderUrlFilter = (url) => !url.startsWith('/');
 
@@ -30,7 +33,7 @@ module.exports = (env, argv) => {
     const styleLoader = MiniCssExtractPlugin.loader;
 
     const sassLoaderOptions = {
-        sourceMap: !isProduction,
+        sourceMap: useCssSourceMap,
         sassOptions: {
             includePaths: [path.join(APP_DIR, 'scss')],
         },
@@ -47,7 +50,7 @@ module.exports = (env, argv) => {
                     localIdentName: isProduction
                         ? '[hash:base64:8]'
                         : '[path][name]__[local]--[hash:base64:5]',
-                    sourceMap: !isProduction,
+                    sourceMap: useCssSourceMap,
                     importLoaders: 1,
                     url: { filter: cssLoaderUrlFilter },
                     esModule: false,
@@ -68,7 +71,7 @@ module.exports = (env, argv) => {
             {
                 loader: 'css-loader',
                 options: {
-                    sourceMap: !isProduction,
+                    sourceMap: useCssSourceMap,
                     importLoaders: 1,
                     url: { filter: cssLoaderUrlFilter },
                     esModule: false,
@@ -101,12 +104,13 @@ module.exports = (env, argv) => {
             clean: isProduction,
         },
 
-        /** Full source maps spike Node memory on large legacy CSS trees; use `npm run build:map` if needed. */
+        /** Full source maps spike Node memory on large legacy CSS trees; use `npm run build:map` if needed.
+         *  Dev uses `cheap-module-source-map` so Chrome maps `app.css` rules back to `style.css` / `respons.css`. */
         devtool: isProduction
             ? prodSourceMap
                 ? 'source-map'
                 : false
-            : 'eval-cheap-module-source-map',
+            : 'cheap-module-source-map',
 
         module: {
             rules: [
