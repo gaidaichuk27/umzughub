@@ -3,7 +3,11 @@ const $ = window.jQuery;
 // ------- CALLBACK -------//
 $(document).ready(function () {
     $('.cme-cls').click(function () {
-        $('.callback').fadeOut(100);
+        if (typeof window.closePopup === 'function') {
+            window.closePopup();
+        } else {
+            $('.callback').fadeOut(100);
+        }
     });
 });
 

@@ -412,8 +412,8 @@ transform: rotate(45deg);
     top: -43px;
     right: -43px;
     border: none;
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
 	cursor: pointer;
 	transition: 0.4s;
 }
@@ -537,6 +537,10 @@ color: #fff;
 }
 .button:hover {
     opacity: 0.8;
+}
+
+.button i {
+    color: inherit;
 }
 /* ---------- #buttons options ----------- */
 
@@ -1294,8 +1298,8 @@ section#round-footer a.header-phone__popup {
     display: block;
 }
 section#round-footer .write-us a {
-width: 40px;
-height: 40px;
+width: 44px;
+height: 44px;
 display: flex;
 align-items: center;
 justify-content: center;
@@ -1305,6 +1309,10 @@ margin-right: 8px;
 border-radius: 50%;
 font-size: 22px;
 color: #fff;
+}
+
+section#round-footer a.logo {
+    color: #fff;
 }
 section#round-footer .write-us a.link-whtsapp {
 background: #00a884;
