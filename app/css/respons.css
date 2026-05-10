@@ -79,7 +79,8 @@
         width: 80px;
         margin-top: 5px;
     }
-    .adress-icon svg {
+    .adress-icon svg,
+    .adress-icon img.adress-ico {
         width: 30px;
         height: 30px;
         margin-top: 6px;
@@ -164,6 +165,15 @@
     }
     section#round-footer .header-phone__time {
         justify-content: center;
+    }
+
+    /* Reduce mobile render work (helps TBT) for large below-the-fold sections. */
+    section#why-us,
+    section#magnific-gallery,
+    section#how-order,
+    section#round-footer {
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 1200px;
     }
     section#first-main h1 {
     text-transform: inherit;
@@ -388,10 +398,51 @@
     }
 
     @media (max-width: 414px) { 
-        .form {
-        zoom: 0.8 !important;
-        }
         section#contact-box input, section#contact-box textarea {
         width: 100%;
+    }
+}
+
+/**
+ * Mobile Web Vitals (CLS / scroll): scoped to small viewports only — no desktop impact.
+ */
+@media (max-width: 991px) {
+    /* Hero: reserve intrinsic 728×600 space on mobile — avoid % height (late resolve → CLS) */
+    section#first-main .col-lg-7 img.hero-lcp {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 728 / 600;
+        object-fit: contain;
+    }
+
+    /* fixed backgrounds cause large CLS / jank on iOS + Chrome mobile */
+    section#contact-box,
+    section#testim-stars {
+        background-attachment: scroll !important;
+    }
+
+    section#top-adress-2 a.logo {
+        display: inline-flex;
+        align-items: center;
+        min-height: 52px;
+    }
+}
+
+@media (max-width: 414px) {
+    /* Avoid CSS zoom — it inflates CLS scores on Lighthouse mobile */
+    .callback .form,
+    #calform .form,
+    .form {
+        zoom: unset !important;
+        padding: 18px 14px !important;
+        font-size: 14px;
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    .callback .form input,
+    #calform .form input {
+        font-size: 16px;
     }
 }

@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
 @font-face {
     font-family: "Druk Cyr";
     src: url("./fonts/DrukCyr-Medium.woff2") format("woff2");
@@ -599,7 +597,8 @@ section#first-main img {
 section#top-adress-2 a.logo img {
     width: auto;
 }
-.adress-icon svg {
+.adress-icon svg,
+.adress-icon img.adress-ico {
     width: 35px;
     height: 35px;
     float: left;
@@ -658,14 +657,62 @@ a.logo {
     color: #2e2e2e;
     line-height: 48px;
 }
-.sing-1 {background: url(./img/gal10.jpg);}
-.sing-2 {background: url(./img/d2.jpg);}
-.sing-3 {background: url(./img/d3.jpg);}
-.sing-4 {background: url(./img/gal13.jpg);}
-.sing-5 {background: url(./img/d5.jpg);}
-.sing-6 {background: url(./img/d6.jpg);}
-.sing-7 {background: url(./img/kisten.jpg);}
-.sing-8 {background: url(./img/util.jpeg);}
+.sing-1 {
+    background-image: url(./img/gal10.jpg);
+    background-image: image-set(
+        url("./img/gal10.jpg?as=webp") type("image/webp"),
+        url("./img/gal10.jpg") type("image/jpeg")
+    );
+}
+.sing-2 {
+    background-image: url(./img/d2.jpg);
+    background-image: image-set(
+        url("./img/d2.jpg?as=webp") type("image/webp"),
+        url("./img/d2.jpg") type("image/jpeg")
+    );
+}
+.sing-3 {
+    background-image: url(./img/d3.jpg);
+    background-image: image-set(
+        url("./img/d3.jpg?as=webp") type("image/webp"),
+        url("./img/d3.jpg") type("image/jpeg")
+    );
+}
+.sing-4 {
+    background-image: url(./img/gal13.jpg);
+    background-image: image-set(
+        url("./img/gal13.jpg?as=webp") type("image/webp"),
+        url("./img/gal13.jpg") type("image/jpeg")
+    );
+}
+.sing-5 {
+    background-image: url(./img/d5.jpg);
+    background-image: image-set(
+        url("./img/d5.jpg?as=webp") type("image/webp"),
+        url("./img/d5.jpg") type("image/jpeg")
+    );
+}
+.sing-6 {
+    background-image: url(./img/d6.jpg);
+    background-image: image-set(
+        url("./img/d6.jpg?as=webp") type("image/webp"),
+        url("./img/d6.jpg") type("image/jpeg")
+    );
+}
+.sing-7 {
+    background-image: url(./img/kisten.jpg);
+    background-image: image-set(
+        url("./img/kisten.jpg?as=webp") type("image/webp"),
+        url("./img/kisten.jpg") type("image/jpeg")
+    );
+}
+.sing-8 {
+    background-image: url(./img/util.jpeg);
+    background-image: image-set(
+        url("./img/util.jpeg?as=webp") type("image/webp"),
+        url("./img/util.jpeg") type("image/jpeg")
+    );
+}
 .service-item {
     transition: 0.3s;
     padding: 20px 30px 20px 44%;
@@ -1368,11 +1415,19 @@ a.tellink {
 }
 .service-item.firmeum {
     background-image: url(./img/gal12.jpg);
+    background-image: image-set(
+        url("./img/gal12.jpg?as=webp") type("image/webp"),
+        url("./img/gal12.jpg") type("image/jpeg")
+    );
     background-size: cover;
     background-position: center;
 }
 .service-item.montazhum {
     background-image: url(./img/gal8.jpg);
+    background-image: image-set(
+        url("./img/gal8.jpg?as=webp") type("image/webp"),
+        url("./img/gal8.jpg") type("image/jpeg")
+    );
     background-size: cover;
     background-position: center;
 }
