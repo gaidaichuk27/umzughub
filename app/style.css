@@ -212,7 +212,7 @@ ul.style-li li:before {
     position: absolute;
     top: 0;
     left: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.3);
 }
 .bg-lines:after {
     content: "";
@@ -626,14 +626,14 @@ section#top-adress-2 {
 
 section#first-main h1 {
     text-transform: uppercase;
-    font-size: 78px;
-    line-height: 83px;
+    font-size: 66px;
+    line-height: 66px;
     letter-spacing: 0.5px;
 }
 section#first-main h1 span {
     color: #f96b16;
     display: block;
-    font-size: 88px;
+    font-size: 66px;
 }
 .sub-offer {
     margin-top: 30px;
@@ -733,7 +733,7 @@ section#contact-box p, section#contact-box a, section#contact-box i {
     color: #fff;
 }
 section#contact-box input, section#contact-box textarea {
-    width: 31%;
+    width: 30%;
     padding: 15px;
     color: #000;
     border: none;
@@ -755,7 +755,9 @@ section#contact-box .button {
 /* ---------- #why-us ----------- */
 section#why-us .hover_content_block {
     text-align: center;
-    font-size: 16px;
+    height: calc(100% - 20px);
+    font-size: 14px;
+    line-height: 20px;
     min-height: 300px;
     padding: 40px;
     background: #dce3e7;
@@ -803,12 +805,16 @@ section#why-us .hover_content_block:hover svg {
     /*---------- section#magnific-gallery ----------*/
 section#magnific-gallery .magnif-row {
     display: flex;
-	margin-bottom: 10px;
+    gap: 16px;
+	margin-bottom: 16px;
 }
+section#magnific-gallery .magnif-row:last-child {
+	margin-bottom: 0;
+}
+
 section#magnific-gallery a.magnif-link {
     display: flex;
     width: 100%;
-    margin: 0 5px;
     height: 35vh;
     align-items: center;
     justify-content: center;
@@ -846,7 +852,11 @@ section#magnific-gallery a.magnif-link:hover img {
 
 section#about-us img {
     border-radius: 30px 0px 0px 30px;
+    height: 100%;
+    object-position: top;
+    object-fit: cover;
 }
+
 section#about-us .flex-box {
     background: #dce3e7;
     margin-left: -30px;
@@ -932,8 +942,8 @@ section#blue-line {
 }
 .line-main p {
     color: #fff;
-    line-height: 22px;
-    font-size: 16px;
+    line-height: 20px;
+    font-size: 13px;
     margin-bottom: 0;
 }
 .line-main.bord-right {
@@ -1024,6 +1034,11 @@ section#testim-stars h2.title {
     text-align: left !important;
     min-height: 200px !important;
 }
+
+section#about-us p {
+    line-height: 22px;
+    font-size: 14px;
+}
 section#about-us p span {
     font-weight: 600;
     color: #f96b16;
@@ -1034,6 +1049,7 @@ section#about-us p span {
     padding: 25px 15px 15px;
     border-radius: 30px;
     min-height: 420px;
+    height: calc(100% - 20px);
     margin-bottom: 15px;
     background: #dce3e7;
 }
@@ -1134,7 +1150,7 @@ section#round-footer .svg-frame svg {
     height: 50px;
 }
 section#round-footer .round-form {
-    width: 80%;
+    width: 90%;
     max-width: 1280px;
     height: 115px;
     display: flex;
@@ -1150,7 +1166,7 @@ section#round-footer .round-form img {
     width: 140px;
     bottom: 0;
     position: absolute;
-    left: 40px;
+    left:0;
 }
 section#round-footer .round-call-text {
     width: 54%;

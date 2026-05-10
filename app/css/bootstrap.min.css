@@ -30,7 +30,7 @@
 	--breakpoint-xs: 0;
 	--breakpoint-sm: 576px;
 	--breakpoint-md: 768px;
-	--breakpoint-lg: 992px;
+	--breakpoint-lg: 1023px;
 	--breakpoint-xl: 1200px;
 	--font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	--font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
@@ -439,7 +439,7 @@ pre code {
 		max-width: 720px
 	}
 }
-@media (min-width:992px) {
+@media (min-width:1023px) {
 	.container {
 		max-width: 960px
 	}
@@ -1075,7 +1075,7 @@ pre code {
 		margin-left: 91.666667%
 	}
 }
-@media (min-width:992px) {
+@media (min-width:1023px) {
 	.col-lg {
 		-ms-flex-preferred-size: 0;
 		flex-basis: 0;
@@ -1645,7 +1645,7 @@ pre code {
 		border: 0
 	}
 }
-@media (max-width:991.98px) {
+@media (max-width:1023px) {
 	.table-responsive-lg {
 		display: block;
 		width: 100%;
@@ -3398,13 +3398,13 @@ tbody.collapse.show {
 		bottom: 100%
 	}
 }
-@media (max-width:991.98px) {
+@media (max-width:1023px) {
 	.navbar-expand-lg>.container, .navbar-expand-lg>.container-fluid {
 		padding-right: 0;
 		padding-left: 0
 	}
 }
-@media (min-width:992px) {
+@media (min-width:1023px) {
 	.navbar-expand-lg {
 		-webkit-box-orient: horizontal;
 		-webkit-box-direction: normal;
@@ -4572,7 +4572,7 @@ button.close {
 		max-width: 300px
 	}
 }
-@media (min-width:992px) {
+@media (min-width:1023px) {
 	.modal-lg {
 		max-width: 800px
 	}
@@ -5232,7 +5232,7 @@ a.bg-dark:focus, a.bg-dark:hover, button.bg-dark:focus, button.bg-dark:hover {
 		display: inline-flex!important
 	}
 }
-@media (min-width:992px) {
+@media (min-width:1023px) {
 	.d-lg-none {
 		display: none!important
 	}
@@ -5766,7 +5766,7 @@ a.bg-dark:focus, a.bg-dark:hover, button.bg-dark:focus, button.bg-dark:hover {
 		align-self: stretch!important
 	}
 }
-@media (min-width:992px) {
+@media (min-width:1023px) {
 	.flex-lg-row {
 		-webkit-box-orient: horizontal!important;
 		-webkit-box-direction: normal!important;
@@ -6067,7 +6067,7 @@ a.bg-dark:focus, a.bg-dark:hover, button.bg-dark:focus, button.bg-dark:hover {
 		float: none!important
 	}
 }
-@media (min-width:992px) {
+@media (min-width:1023px) {
 	.float-lg-left {
 		float: left!important
 	}
@@ -6768,7 +6768,7 @@ a.bg-dark:focus, a.bg-dark:hover, button.bg-dark:focus, button.bg-dark:hover {
 		margin-left: auto!important
 	}
 }
-@media (min-width:992px) {
+@media (min-width:1023px) {
 	.m-lg-0 {
 		margin: 0!important
 	}
@@ -7204,7 +7204,7 @@ a.bg-dark:focus, a.bg-dark:hover, button.bg-dark:focus, button.bg-dark:hover {
 		text-align: center!important
 	}
 }
-@media (min-width:992px) {
+@media (min-width:1023px) {
 	.text-lg-left {
 		text-align: left!important
 	}
@@ -7349,10 +7349,10 @@ a.text-dark:focus, a.text-dark:hover {
 		size: a3
 	}
 	body {
-		min-width: 992px!important
+		min-width: 1023px!important
 	}
 	.container {
-		min-width: 992px!important
+		min-width: 1023px!important
 	}
 	.navbar {
 		display: none
