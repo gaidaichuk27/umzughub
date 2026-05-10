@@ -1,8 +1,12 @@
+const fs = require('fs');
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const express = require('express');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const sharp = require('sharp');
+const webpack = require('webpack');
 
 /**
  * Application root (reuse across projects):
@@ -11,6 +15,124 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
  *   app/scss/       — global Sass entry + partials
  */
 const APP_DIR = path.resolve(__dirname, 'app');
+
+/**
+ * After PNG is optimized, emit responsive WebPs for hero img srcset / LCP preloads.
+ */
+function emitMainWebpPlugin() {
+    const webpOptsDefault = { quality: 76, effort: 4 };
+    const webpOptsMobile = { quality: 68, effort: 4 };
+    const WIDTH_INTRINSIC = 728;
+    const WIDTH_DESKTOP_MAX = 1200;
+
+    async function resizeWebp(input, width, webpOpts = webpOptsDefault) {
+        let pipeline = sharp(input).rotate();
+        if (width) {
+            pipeline = pipeline.resize(width, undefined, {
+                withoutEnlargement: true,
+                fit: 'inside',
+            });
+        }
+        return pipeline.webp(webpOpts).toBuffer();
+    }
+
+    return {
+        apply(compiler) {
+            compiler.hooks.thisCompilation.tap(
+                'EmitMainWebpPlugin',
+                (compilation) => {
+                    compilation.hooks.processAssets.tapPromise(
+                        {
+                            name: 'EmitMainWebpPlugin',
+                            stage:
+                                webpack.Compilation
+                                    .PROCESS_ASSETS_STAGE_OPTIMIZE_SIZE + 50,
+                        },
+                        async () => {
+                            const mainPng = 'img/main.png';
+                            const asset = compilation.getAsset(mainPng);
+                            if (!asset) {
+                                return;
+                            }
+                            const src = asset.source;
+                            const buffer =
+                                typeof src.buffer === 'function'
+                                    ? src.buffer()
+                                    : Buffer.from(src.source());
+
+                            const buf480 = await resizeWebp(
+                                buffer,
+                                480,
+                                webpOptsMobile
+                            );
+                            const buf728 = await resizeWebp(
+                                buffer,
+                                WIDTH_INTRINSIC
+                            );
+                            const buf1200 = await resizeWebp(
+                                buffer,
+                                WIDTH_DESKTOP_MAX
+                            );
+
+                            compilation.emitAsset(
+                                'img/main-480.webp',
+                                new webpack.sources.RawSource(buf480)
+                            );
+                            compilation.emitAsset(
+                                'img/main-728.webp',
+                                new webpack.sources.RawSource(buf728)
+                            );
+                            compilation.emitAsset(
+                                'img/main-1200.webp',
+                                new webpack.sources.RawSource(buf1200)
+                            );
+                        }
+                    );
+                }
+            );
+        },
+    };
+}
+
+function deferExtractedCssPlugin() {
+    return {
+        apply(compiler) {
+            compiler.hooks.compilation.tap(
+                'DeferExtractedCssPlugin',
+                (compilation) => {
+                    HtmlWebpackPlugin.getCompilationHooks(
+                        compilation
+                    ).alterAssetTagGroups.tap(
+                        'DeferExtractedCssPlugin',
+                        (data) => {
+                            data.headTags = data.headTags.map((tag) => {
+                                if (
+                                    tag.tagName !== 'link' ||
+                                    !tag.attributes ||
+                                    tag.attributes.rel !== 'stylesheet' ||
+                                    !tag.attributes.href
+                                ) {
+                                    return tag;
+                                }
+                                const href = tag.attributes.href;
+                                return {
+                                    ...tag,
+                                    attributes: {
+                                        href,
+                                        rel: 'preload',
+                                        as: 'style',
+                                        onload: "this.onload=null;this.rel='stylesheet'",
+                                    },
+                                };
+                            });
+                            return data;
+                        }
+                    );
+                }
+            );
+        },
+    };
+}
 
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
@@ -112,6 +234,56 @@ module.exports = (env, argv) => {
                 : false
             : 'cheap-module-source-map',
 
+        ...(isProduction
+            ? {
+                  optimization: {
+                      minimize: true,
+                      minimizer: [
+                          '...',
+                          new ImageMinimizerPlugin({
+                              minimizer: {
+                                  implementation:
+                                      ImageMinimizerPlugin.sharpMinify,
+                                  options: {
+                                      encodeOptions: {
+                                          jpeg: {
+                                              quality: 77,
+                                              mozjpeg: true,
+                                              progressive: true,
+                                          },
+                                          png: {
+                                              compressionLevel: 9,
+                                              quality: 78,
+                                          },
+                                          webp: { quality: 77, effort: 4 },
+                                          gif: {},
+                                          avif: { quality: 72 },
+                                          tiff: { quality: 78 },
+                                      },
+                                  },
+                              },
+                              generator: [
+                                  {
+                                      preset: 'webp',
+                                      implementation:
+                                          ImageMinimizerPlugin.sharpGenerate,
+                                      options: {
+                                          encodeOptions: {
+                                              webp: {
+                                                  quality: 77,
+                                                  effort: 4,
+                                              },
+                                          },
+                                      },
+                                  },
+                              ],
+                              test: /\.(jpe?g|png|gif|webp|avif|tiff?)$/i,
+                          }),
+                      ],
+                  },
+              }
+            : {}),
+
         module: {
             rules: [
                 sassModuleRule,
@@ -159,6 +331,33 @@ module.exports = (env, argv) => {
                         to: '.',
                         noErrorOnMissing: true,
                     },
+                    /**
+                     * PDFs placed directly under `app/` (e.g. Gewerbeanmeldung_*.pdf) — same root URLs in `dist/`.
+                     * Runs after `app/pdf` so duplicate filenames in `app/` overwrite if both exist.
+                     */
+                    {
+                        context: APP_DIR,
+                        from: '*.pdf',
+                        to: '.',
+                        noErrorOnMissing: true,
+                    },
+                    {
+                        from: path.join(APP_DIR, 'thanks.php'),
+                        to: 'thanks.php',
+                        noErrorOnMissing: true,
+                    },
+                    {
+                        context: APP_DIR,
+                        from: 'fav.png',
+                        to: '.',
+                        noErrorOnMissing: true,
+                    },
+                    {
+                        context: APP_DIR,
+                        from: '.htaccess',
+                        to: '.',
+                        noErrorOnMissing: true,
+                    },
                 ],
             }),
             new MiniCssExtractPlugin({
@@ -167,10 +366,12 @@ module.exports = (env, argv) => {
             }),
             new HtmlWebpackPlugin({
                 template: path.join(APP_DIR, 'index.html'),
-                /** After CDN jQuery/Bootstrap/Magnific at bottom of template — matches legacy PHP script order. */
+                /** After CDN jQuery/Bootstrap/Magnific — deferred bundle runs after parse in document order. */
                 inject: 'body',
-                scriptLoading: 'blocking',
+                scriptLoading: 'defer',
             }),
+            deferExtractedCssPlugin(),
+            emitMainWebpPlugin(),
         ],
 
         watchOptions: {
@@ -186,19 +387,87 @@ module.exports = (env, argv) => {
              * regardless of webpack-dev-server static quirks on Windows.
              */
             setupMiddlewares: (middlewares) => {
-                /** Root-level PDFs (`/foo.pdf`) from `app/pdf/` — same as production static deploy. */
+                /**
+                 * Lighthouse / PageSpeed: avoid "cache TTL: none" on static assets during local dev.
+                 * Exclude webpack HMR chunks — caching those breaks hot reload.
+                 */
                 middlewares.unshift({
-                    name: 'umzughub-static-pdf',
+                    name: 'umzughub-cache-headers',
                     middleware: (req, res, next) => {
-                        if (!req.path.toLowerCase().endsWith('.pdf')) {
+                        const urlPath = (req.path || '').split('?')[0];
+                        if (urlPath.includes('hot-update')) {
                             next();
                             return;
                         }
-                        express.static(path.join(APP_DIR, 'pdf'), {
-                            etag: true,
-                            index: false,
-                            fallthrough: true,
-                        })(req, res, next);
+                        if (
+                            urlPath.startsWith('/images/') ||
+                            urlPath.startsWith('/fonts/') ||
+                            urlPath.startsWith('/img/')
+                        ) {
+                            res.setHeader(
+                                'Cache-Control',
+                                'public, max-age=31536000, immutable'
+                            );
+                            next();
+                            return;
+                        }
+                        if (/^\/app\.(js|css)$/.test(urlPath)) {
+                            res.setHeader(
+                                'Cache-Control',
+                                'public, max-age=3600, must-revalidate'
+                            );
+                            next();
+                            return;
+                        }
+                        if (
+                            /\.(?:jpg|jpeg|png|gif|webp|svg|ico)$/i.test(urlPath)
+                        ) {
+                            res.setHeader(
+                                'Cache-Control',
+                                'public, max-age=31536000, immutable'
+                            );
+                        }
+                        next();
+                    },
+                });
+                /** `/foo.pdf`: prefer `app/pdf/`, then same basename under `app/` (matches CopyWebpackPlugin order). */
+                middlewares.unshift({
+                    name: 'umzughub-static-pdf',
+                    middleware: (req, res, next) => {
+                        const urlPath = (req.path || '').split('?')[0];
+                        if (!urlPath.toLowerCase().endsWith('.pdf')) {
+                            next();
+                            return;
+                        }
+                        const base = path.basename(urlPath);
+                        if (!base || base.includes('..')) {
+                            next();
+                            return;
+                        }
+                        const inPdfDir = path.join(APP_DIR, 'pdf', base);
+                        const inAppRoot = path.join(APP_DIR, base);
+                        const resolvedPdf = path.resolve(inPdfDir);
+                        const resolvedRoot = path.resolve(inAppRoot);
+                        const appResolved = path.resolve(APP_DIR);
+                        if (
+                            !resolvedPdf.startsWith(path.join(appResolved, 'pdf')) ||
+                            !resolvedRoot.startsWith(appResolved)
+                        ) {
+                            next();
+                            return;
+                        }
+                        if (fs.existsSync(inPdfDir) && fs.statSync(inPdfDir).isFile()) {
+                            res.sendFile(inPdfDir);
+                            return;
+                        }
+                        if (
+                            fs.existsSync(inAppRoot) &&
+                            fs.statSync(inAppRoot).isFile()
+                        ) {
+                            res.sendFile(inAppRoot);
+                            return;
+                        }
+                        next();
                     },
                 });
                 /** Serve before webpack middleware so `/img/*` is never answered as HTML. */
@@ -209,6 +478,8 @@ module.exports = (env, argv) => {
                         etag: true,
                         index: false,
                         fallthrough: false,
+                        maxAge: 31536000000,
+                        immutable: true,
                     }),
                 });
                 return middlewares;

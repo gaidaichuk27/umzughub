@@ -1,5 +1,3 @@
-import 'babel-polyfill';
-
 import './scss/main.scss';
 
 /** Order matters: globals first, then site behaviour (same pattern as classic PHP pages). */
