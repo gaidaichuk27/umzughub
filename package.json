@@ -27,12 +27,8 @@
   "scripts": {
     "dev": "webpack-dev-server --mode development --config webpack.config.js",
     "build": "node --max-old-space-size=12288 ./node_modules/webpack/bin/webpack.js --mode production --config webpack.config.js --bail",
-    "build:map": "node --max-old-space-size=12288 ./node_modules/webpack/bin/webpack.js --mode production --config webpack.config.js --bail --env sourceMap=1",
-    "preview": "serve -l 8080 dist -c ../serve.json"
+    "preview": "serve -l 8082 dist -c ../serve.json"
   },
   "author": "Gaida",
-  "license": "MIT",
-  "dependencies": {
-    "core-js": "^3.49.0"
-  }
+  "license": "MIT"
 }

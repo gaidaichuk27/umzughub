@@ -4,7 +4,6 @@
  */
 window.showPopup = function showPopup(e) {
     e.preventDefault();
-    const $ = window.jQuery;
     const callbackEl = document.getElementById('calform') || document.querySelector('.callback');
     if (!callbackEl) return;
 
@@ -24,7 +23,7 @@ window.showPopup = function showPopup(e) {
     callbackEl.setAttribute('aria-hidden', 'false');
     setBackdropHidden(true);
 
-    if ($) $('.callback').fadeIn(100);
+    callbackEl.classList.add('callback--open');
 
     // Move focus into the dialog (first meaningful control).
     window.requestAnimationFrame(() => {
@@ -37,7 +36,6 @@ window.showPopup = function showPopup(e) {
 
 window.closePopup = function closePopup(e) {
     if (e) e.preventDefault();
-    const $ = window.jQuery;
     const callbackEl = document.getElementById('calform') || document.querySelector('.callback');
     if (!callbackEl) return;
 
@@ -54,7 +52,7 @@ window.closePopup = function closePopup(e) {
     callbackEl.setAttribute('aria-hidden', 'true');
     setBackdropHidden(false);
 
-    if ($) $('.callback').fadeOut(100);
+    callbackEl.classList.remove('callback--open');
 
     const last = window.__umzughubPopupLastFocus;
     window.__umzughubPopupLastFocus = null;

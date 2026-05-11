@@ -1,6 +1,6 @@
 import './scss/main.scss';
 
-/** Order matters: globals first, then site behaviour (same pattern as classic PHP pages). */
+/** Order matters: globals first, then site behavior. */
 import './js/globals.js';
 import './js/main-scripts.js';
 
@@ -33,12 +33,12 @@ function initTelInputs() {
     });
 }
 
-const $ = window.jQuery;
-if ($) {
-    $(function () {
-        initTelInputs();
-        $('#main-contact .button').on('click', function () {
-            $('#inbut').val($(this).data('info'));
-        });
-    });
+function boot() {
+    initTelInputs();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+} else {
+    boot();
 }
