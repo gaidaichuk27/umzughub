@@ -128,7 +128,7 @@ h2.title {
     color: #2e2e2e;
 }
 h2.title span {
-    color: #f96b16;
+    color: #c35411;
 }
 
 h2.title.outlines {
@@ -191,7 +191,7 @@ ul.style-li li:before {
     background: #f4f8fb;
 }
 .linar-bg {
-    background: #f96b16;
+    background: #c35411;
 }
 .bg-gradient {background: linear-gradient(45deg, #eb9b22 20%, #60adec 50%, #3f51b5);}
 .bg-light:before {
@@ -390,6 +390,10 @@ transform: rotate(45deg);
     background: #505050e3;
     box-shadow: inset 0 0 200px #0000007d, inset 0 0 100px #00000059, inset 0 0 100px #0000002e;
 }
+
+.callback.callback--open {
+    display: flex;
+}
 .popup_bg {
     background: rgba(0, 0, 0, 0.5);
     position: absolute;
@@ -444,7 +448,7 @@ transform: rotate(45deg);
     cursor: pointer;
     font-weight: 600;
     position: relative;
-    background: #f96b16;
+    background: #c35411;
     border: 0px;
     color: rgb(255, 255, 255);
 }
@@ -455,7 +459,7 @@ transform: rotate(45deg);
     padding-bottom: 0px;
     margin-top: 10px;
     font-size: 40px;
-    color: #f96b16;
+    color: #c35411;
     letter-spacing: 0px;
 }
 .h6 span {
@@ -482,7 +486,7 @@ transform: rotate(45deg);
 }
 .brand-logo i {
     font-size: 50px;
-    color: #f96b16;
+    color: #c35411;
 }
 div#calform .flex-box-inner {
     width: auto;
@@ -502,7 +506,7 @@ div#calform .flex-box-inner {
     z-index: 1;
     border-radius: 60px;
     cursor: pointer;
-    background: #f96b16;
+    background: #c35411;
     font-weight: 500;
     font-size: 16px;
     overflow: hidden;
@@ -606,7 +610,7 @@ section#top-adress-2 a.logo img {
     width: 35px;
     height: 35px;
     float: left;
-    fill: #f96b16;
+    fill: #c35411;
     margin-top: 4px;
     margin-right: 10px;
 }
@@ -634,7 +638,7 @@ section#first-main h1 {
     letter-spacing: 0.5px;
 }
 section#first-main h1 span {
-    color: #f96b16;
+    color: #c35411;
     display: block;
     font-size: 66px;
 }
@@ -653,7 +657,7 @@ section#first-main .flex-box {
 }
 
 a.logo span {
-    color: #f96b16;
+    color: #c35411;
 }
 a.logo {
     font-family: "Druk Cyr";
@@ -760,7 +764,7 @@ a.logo {
 }
 .sr-price {
     font-size: 16px;
-    color: #f96b16;
+    color: #c35411;
     font-weight: 600;
 }
 
@@ -817,7 +821,7 @@ section#why-us .hover_content_block {
     margin-bottom: 30px;
 }
 section#why-us .hover_content_block:hover {
-    background: #f96b16;
+    background: #c35411;
     transition: 0.3s;
 }
 section#why-us .hover_content_block h2 {
@@ -828,7 +832,7 @@ section#why-us .hover_content_block h2 {
 section#why-us .hover_con_text svg {
     width: 100px;
     height: 100px;
-    fill: #f96b16;
+    fill: #c35411;
     margin-bottom: 20px;
     transition: 0.3s;
 }
@@ -949,7 +953,7 @@ section#about-us .sub-img-box:before {
     border-radius: 8px;
 }
 p.with-frame {
-    background: #f96b16;
+    background: #c35411;
     padding: 15px;
     border-radius: 15px;
     color: #fff;
@@ -981,7 +985,7 @@ section#about-us .one-vhar span {
 /* ---------- #about-us ----------- */
 
 section#blue-line {
-    background: #f96b16;
+    background: #c35411;
 }
 .line-main {
     display: flex;
@@ -1032,7 +1036,7 @@ section#testim-stars .photo-star h4 {
     text-align: center;
     margin-top: 15px;
     font-size: 29px;
-    color: #f96b16;
+    color: #c35411;
 }
 section#testim-stars .strar-box {
     margin: 0 auto;
@@ -1063,7 +1067,7 @@ section#testim-stars .owl-carousel button.owl-dot {
     border-radius: 50%;
 }
 section#testim-stars button.owl-dot.active {
-    background: #f96b16;
+    background: #c35411;
 }
 /* ---------- #testim-stars ----------- */
 
@@ -1078,7 +1082,7 @@ section#testim-stars h2.title {
     margin-top: 15px;
     width: 100px;
     height: 100px;
-    fill: #f96b16;
+    fill: #c35411;
 }
 
 .hover_content_block.side-image {
@@ -1092,7 +1096,7 @@ section#about-us p {
 }
 section#about-us p span {
     font-weight: 600;
-    color: #f96b16;
+    /* color: #c35411; */
 }
 
 /* ---------- #section#how-order ----------- */
@@ -1105,7 +1109,7 @@ section#about-us p span {
     background: #dce3e7;
 }
 .order-box:hover {
-    background: #f96b16;
+    background: #c35411;
     transition: 0.3s;
 }
 .order-box-img {
@@ -1119,7 +1123,7 @@ section#about-us p span {
     align-items: center;
     width: 190px;
     height: 190px;
-    background: #f96b16;
+    background: #c35411;
     border-radius: 50%;
     margin: 0px auto 20px;
     position: relative;
@@ -1146,7 +1150,7 @@ section#about-us p span {
     cursor: default;
 }
 .order-box .button {
-    background: #f96b16;
+    background: #c35411;
     border-radius: 10px;
     color: #fff;
 }
@@ -1208,7 +1212,7 @@ section#round-footer .round-form {
     align-items: center;
     justify-content: center;
     margin: -140px auto 0;
-    background: #f96b16;
+    background: #c35411;
     border-radius: 20px;
     position: relative;
     z-index: 99;
@@ -1278,7 +1282,7 @@ section#round-footer a.header-phone__link {
     font-weight: 700 !important;
 }
 section#round-footer .header-phone i {
-    color: #f96b16;
+    color: #c35411;
 }
 section#round-footer .header-phone__time {
     font-size: 0.8rem;
@@ -1376,7 +1380,7 @@ section#testim-stars {
     position: relative;
 }
 .thanks-block h1 {
-    color: #f96b16;
+    color: #c35411;
     font-size: 60px;
     text-transform: uppercase;
 }
@@ -1384,7 +1388,7 @@ section#testim-stars {
     width: 300px;
     padding: 20px;
     border-radius: 15px;
-    background: #f96b16;
+    background: #c35411;
     color: #f1f2f2;
     margin: 20px auto 0;
     font-weight: 600;

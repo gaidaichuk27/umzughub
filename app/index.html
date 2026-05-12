@@ -22,7 +22,7 @@
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 </style>
 <style media="(max-width: 1024px)">
-/* Mobile critical: header + hero layout until deferred app.css (FCP) — keep in sync with app/css/respons.css #first-main */
+/* Mobile critical: header + hero layout until app.css (FCP) — keep in sync with app/css/respons.css #first-main */
 body{margin:0;background:#eff3f6;color:#000;font-family:system-ui,-apple-system,sans-serif;font-size:15px;-webkit-font-smoothing:subpixel-antialiased;}
 .container{width:100%;max-width:1140px;margin-right:auto;margin-left:auto;padding-left:15px;padding-right:15px;box-sizing:border-box;}
 .row{display:flex;flex-wrap:wrap;margin-right:-15px;margin-left:-15px;}
@@ -35,12 +35,12 @@ section#first-main .row{flex-direction:column-reverse;}
 section#first-main .col-lg-7 img.hero-lcp{display:block;width:100%;height:auto;aspect-ratio:728 / 600;object-fit:contain;}
 </style>
 
-<link rel="preload" href="/app.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<!-- Bundled app.css is injected by webpack (blocking link by default; preload→stylesheet if PERF_USE_DEFER_EXTRACTED_CSS at build). -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;display=swap" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;display=optional" media="print" onload="this.media='all'">
+<!-- Magnific Popup CSS is loaded on first gallery open (see main-scripts.js). -->
 
 <script type="application/ld+json">
 {
@@ -126,8 +126,7 @@ section#first-main .col-lg-7 img.hero-lcp{display:block;width:100%;height:auto;a
 </script>
 
 <noscript>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;display=swap">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;display=optional">
 <link rel="stylesheet" href="/app.css">
 </noscript>
 </head>
@@ -643,7 +642,15 @@ Entsorgung</p>
 
 <script>
 (function () {
+  if (window.__umzughubGtmLoaded) {
+    return;
+  }
+  var MOBILE_GTM_DELAY_MS = 5000;
   function loadGtm() {
+    if (window.__umzughubGtmLoaded) {
+      return;
+    }
+    window.__umzughubGtmLoaded = true;
     (function (w, d, s, l, i) {
       w[l] = w[l] || [];
       w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
@@ -656,24 +663,26 @@ Entsorgung</p>
     })(window, document, 'script', 'dataLayer', 'GTM-NPGV4RNP');
   }
 
-  // Desktop: keep current behavior. Mobile: delay GTM to reduce main-thread blocking (Lighthouse TBT).
+  /*
+   * Wide screens: load immediately (editorial / analytics expectation).
+   * Narrow screens: timer ONLY — do NOT attach "first click" listeners: Lighthouse and other tools
+   * programmatically click during audits; that loads gtm.js inside the trace and balloons TBT (often 1–2s).
+   * Tune delay vs reporting needs (lower = earlier tags, higher lab TBT if the trace outlasts the delay).
+   */
   if (window.matchMedia && window.matchMedia('(min-width: 992px)').matches) {
     loadGtm();
     return;
   }
 
-  var run = function () {
-    if (window.requestIdleCallback) {
-      window.requestIdleCallback(loadGtm, { timeout: 4000 });
-    } else {
-      setTimeout(loadGtm, 3000);
-    }
-  };
-
-  if (document.readyState === 'complete') run();
-  else window.addEventListener('load', run, { once: true });
+  // Mobile: delay a bit to reduce startup work, but still capture early visits.
+  // Prefer idle time when available, with a hard timeout.
+  if (window.requestIdleCallback) {
+    window.requestIdleCallback(loadGtm, { timeout: MOBILE_GTM_DELAY_MS });
+  } else {
+    window.setTimeout(loadGtm, MOBILE_GTM_DELAY_MS);
+  }
 })();
 </script>
-<script defer src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<!-- jQuery is loaded on demand when opening the image gallery (see main-scripts.js). -->
 </body>
 </html>

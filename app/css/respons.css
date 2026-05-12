@@ -31,7 +31,12 @@
     .cme {  
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 20px;
+    }
+
+    section#contact-box input, section#contact-box textarea {  
+        width: calc(33% - 10px);
+        margin: 0;
     }
 
     .line-main {
@@ -172,14 +177,13 @@
     section#magnific-gallery,
     section#how-order,
     section#round-footer {
-        content-visibility: auto;
         contain-intrinsic-size: 1px 1200px;
     }
     section#first-main h1 {
     text-transform: inherit;
             font-size: 45px;
             line-height: 45px;
-            background: #f96b16;
+            background: #c35411;
             color: #ffff;
             padding: 10px 0 15px;
             margin-left: -15px;
@@ -397,7 +401,7 @@
     }
     }
 
-    @media (max-width: 414px) { 
+    @media (max-width: 568px) { 
         section#contact-box input, section#contact-box textarea {
         width: 100%;
     }

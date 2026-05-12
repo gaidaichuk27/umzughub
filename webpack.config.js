@@ -20,8 +20,9 @@ const APP_DIR = path.resolve(__dirname, 'app');
  * After PNG is optimized, emit responsive WebPs for hero img srcset / LCP preloads.
  */
 function emitMainWebpPlugin() {
-    const webpOptsDefault = { quality: 76, effort: 4 };
-    const webpOptsMobile = { quality: 68, effort: 4 };
+    /** Slightly tighter compression on mobile hero sizes — improves LCP bytes (rebuild dist to regenerate WebPs). */
+    const webpOptsDefault = { quality: 72, effort: 4 };
+    const webpOptsMobile = { quality: 62, effort: 4 };
     const WIDTH_INTRINSIC = 728;
     const WIDTH_DESKTOP_MAX = 1200;
 
@@ -94,46 +95,6 @@ function emitMainWebpPlugin() {
     };
 }
 
-function deferExtractedCssPlugin() {
-    return {
-        apply(compiler) {
-            compiler.hooks.compilation.tap(
-                'DeferExtractedCssPlugin',
-                (compilation) => {
-                    HtmlWebpackPlugin.getCompilationHooks(
-                        compilation
-                    ).alterAssetTagGroups.tap(
-                        'DeferExtractedCssPlugin',
-                        (data) => {
-                            data.headTags = data.headTags.map((tag) => {
-                                if (
-                                    tag.tagName !== 'link' ||
-                                    !tag.attributes ||
-                                    tag.attributes.rel !== 'stylesheet' ||
-                                    !tag.attributes.href
-                                ) {
-                                    return tag;
-                                }
-                                const href = tag.attributes.href;
-                                return {
-                                    ...tag,
-                                    attributes: {
-                                        href,
-                                        rel: 'preload',
-                                        as: 'style',
-                                        onload: "this.onload=null;this.rel='stylesheet'",
-                                    },
-                                };
-                            });
-                            return data;
-                        }
-                    );
-                }
-            );
-        },
-    };
-}
-
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
     const prodSourceMap =
@@ -142,7 +103,7 @@ module.exports = (env, argv) => {
             env.sourceMap === '1' ||
             env.sourceMap === 1);
 
-    /** Maps bundled `app.css` back to `style.css`, `respons.css`, etc. in DevTools (dev always; prod with `npm run build:map`). */
+    /** Maps bundled `app.css` back to `style.css`, `respons.css`, etc. in DevTools (dev always; prod by running a build with `--env sourceMap=1`). */
     const useCssSourceMap = !isProduction || prodSourceMap;
 
     /** Leave root-absolute URLs as-is (any domain; assets served from site `/img/`, etc.). */
@@ -210,7 +171,8 @@ module.exports = (env, argv) => {
         mode: argv.mode || 'development',
 
         entry: {
-            app: path.join(APP_DIR, 'index.js'),
+            app:
+                path.join(APP_DIR, 'index.js'),
         },
 
         resolve: {
@@ -370,7 +332,6 @@ module.exports = (env, argv) => {
                 inject: 'body',
                 scriptLoading: 'defer',
             }),
-            deferExtractedCssPlugin(),
             emitMainWebpPlugin(),
         ],
 
@@ -380,7 +341,7 @@ module.exports = (env, argv) => {
         },
 
         devServer: {
-            port: 8080,
+            port: 8081,
             host: 'localhost',
             /**
              * Serve `app/img` at `/img` via Express so `<img src="/img/logo.png">` always works
@@ -470,27 +431,22 @@ module.exports = (env, argv) => {
                         next();
                     },
                 });
-                /** Serve before webpack middleware so `/img/*` is never answered as HTML. */
-                middlewares.unshift({
-                    name: 'umzughub-static-img',
-                    path: '/img',
-                    middleware: express.static(path.join(APP_DIR, 'img'), {
-                        etag: true,
-                        index: false,
-                        fallthrough: false,
-                        maxAge: 31536000000,
-                        immutable: true,
-                    }),
-                });
                 return middlewares;
             },
             static: false,
             historyApiFallback: false,
             compress: true,
             open: true,
-            hot: true,
-            liveReload: true,
+            /**
+             * HMR/liveReload can get into an aggressive reload loop on some Windows setups
+             * (browser repeatedly reconnects to the dev-server client). Keep dev stable by default.
+             */
+            hot: false,
+            liveReload: false,
             client: {
+                // If your page still refreshes repeatedly, disable the client entirely.
+                webSocketTransport: 'ws',
+                reconnect: 0,
                 overlay: {
                     errors: true,
                     warnings: false,

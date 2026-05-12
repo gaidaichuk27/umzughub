@@ -1,24 +1,4 @@
-const $ = window.jQuery;
-
-// ------- CALLBACK -------//
-$(document).ready(function () {
-    $('.cme-cls').click(function () {
-        if (typeof window.closePopup === 'function') {
-            window.closePopup();
-        } else {
-            $('.callback').fadeOut(100);
-        }
-    });
-});
-
-const formEl = document.querySelector('.form');
-if (formEl) {
-    formEl.classList.add('animated', 'fadeIn');
-}
-
-$('.button').click(function () {
-    $('#inbut').val($(this).data('info'));
-});
+/** Site behaviour — vanilla DOM (jQuery loads only when opening the Magnific gallery). */
 
 function loadScriptOnce(src) {
     return new Promise((resolve, reject) => {
@@ -35,64 +15,128 @@ function loadScriptOnce(src) {
     });
 }
 
+const JQUERY_SLIM =
+    'https://code.jquery.com/jquery-3.7.1.slim.min.js';
+const MAGNIFIC_CSS =
+    'https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.css';
+const MAGNIFIC_JS =
+    'https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js';
+
+function loadCssOnce(href) {
+    return new Promise((resolve, reject) => {
+        if (document.querySelector(`link[href="${href}"]`)) {
+            resolve();
+            return;
+        }
+        const l = document.createElement('link');
+        l.rel = 'stylesheet';
+        l.href = href;
+        l.onload = () => resolve();
+        l.onerror = () => reject(new Error(`Failed to load ${href}`));
+        document.head.appendChild(l);
+    });
+}
+
+function ensureJQuery() {
+    if (window.jQuery) {
+        return Promise.resolve();
+    }
+    return loadScriptOnce(JQUERY_SLIM).then(() => {});
+}
+
 let magnificReadyPromise = null;
 function ensureMagnificPopup() {
-    if (typeof $.fn.magnificPopup === 'function') {
+    const $ = window.jQuery;
+    if ($ && typeof $.fn.magnificPopup === 'function') {
         return Promise.resolve();
     }
     if (!magnificReadyPromise) {
-        magnificReadyPromise = loadScriptOnce(
-            'https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js'
-        );
+        magnificReadyPromise = ensureJQuery()
+            .then(() =>
+                Promise.all([
+                    loadCssOnce(MAGNIFIC_CSS),
+                    loadScriptOnce(MAGNIFIC_JS),
+                ])
+            )
+            .then(() => {});
     }
     return magnificReadyPromise;
 }
 
-// ------- MOBILE MENU -------//
+// ------- CALLBACK -------//
+document.querySelectorAll('.cme-cls').forEach((el) => {
+    el.addEventListener('click', () => {
+        if (typeof window.closePopup === 'function') {
+            window.closePopup();
+        } else {
+            document
+                .querySelector('.callback')
+                ?.classList.remove('callback--open');
+        }
+    });
+});
 
-$('body').click(function () {
-    var $nav = $('.navbar-collapse');
-    if (typeof $.fn.collapse === 'function') {
-        $nav.collapse('hide');
-    } else {
-        /** Navbar open state is `.show` — works even if Bootstrap plugins failed to attach (dev/order quirks). */
-        $nav.removeClass('show');
+const formEl = document.querySelector('.form');
+if (formEl) {
+    formEl.classList.add('animated', 'fadeIn');
+}
+
+document.querySelectorAll('.button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+        const inbut = document.getElementById('inbut');
+        if (inbut && btn.dataset.info !== undefined) {
+            inbut.value = btn.dataset.info;
+        }
+    });
+});
+
+// ------- MOBILE MENU -------//
+document.body.addEventListener('click', () => {
+    const nav = document.querySelector('.navbar-collapse');
+    if (nav) {
+        nav.classList.remove('show');
     }
 });
 
-// ------- FIXED MENU (skip if navbar absent — avoids scroll cost on every frame) -------//
+// ------- FIXED MENU -------//
 (function () {
-    var $head = jQuery('#top-head-1');
-    if (!$head.length) {
+    const head = document.getElementById('top-head-1');
+    if (!head) {
         return;
     }
-    jQuery(window).on('scroll', function () {
-        var the_top = jQuery(document).scrollTop();
-        if (the_top > 100) {
-            $head.addClass('fixed');
+    window.addEventListener('scroll', function () {
+        const top =
+            window.pageYOffset || document.documentElement.scrollTop || 0;
+        if (top > 100) {
+            head.classList.add('fixed');
         } else {
-            $head.removeClass('fixed');
+            head.classList.remove('fixed');
         }
     });
 })();
 
-// Lazy-load Magnific Popup only when user interacts with gallery (cuts initial TBT).
-$(document).on('click', '.magnif-link', function (e) {
-    if (typeof $.fn.magnificPopup === 'function') {
+// ------- Gallery: jQuery + Magnific loaded on first open only -------//
+document.addEventListener('click', function (e) {
+    const link = e.target.closest('.magnif-link');
+    if (!link) {
+        return;
+    }
+    const $ = window.jQuery;
+    if ($ && typeof $.fn.magnificPopup === 'function') {
         return;
     }
     e.preventDefault();
-    const $link = $(this);
+    const href = link.getAttribute('href') || '';
     ensureMagnificPopup()
         .then(() => {
-            $('.magnif-link').magnificPopup({
+            const jq = window.jQuery;
+            jq('.magnif-link').magnificPopup({
                 type: 'image',
                 gallery: { enabled: true },
             });
-            $link.trigger('click');
+            jq(link).trigger('click');
         })
         .catch(() => {
-            // If the plugin fails to load, fall back to default navigation.
-            window.location.href = $link.attr('href');
+            window.location.href = href;
         });
 });
