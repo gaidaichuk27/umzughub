@@ -128,7 +128,7 @@ h2.title {
     color: #2e2e2e;
 }
 h2.title span {
-    color: #c35411;
+    color: #b64d0e;
 }
 
 h2.title.outlines {
@@ -459,7 +459,7 @@ transform: rotate(45deg);
     padding-bottom: 0px;
     margin-top: 10px;
     font-size: 40px;
-    color: #c35411;
+    color: #b64d0e;
     letter-spacing: 0px;
 }
 .h6 span {
@@ -486,7 +486,7 @@ transform: rotate(45deg);
 }
 .brand-logo i {
     font-size: 50px;
-    color: #c35411;
+    color: #b64d0e;
 }
 div#calform .flex-box-inner {
     width: auto;
@@ -591,7 +591,7 @@ color: #fff;
 
 section#first-main {
     height: auto;
-    background: url(./img/gray-bg.jpg);
+    background: #dce3e7;
     background-position: center;
     padding-top: 100px;
 }
@@ -638,7 +638,7 @@ section#first-main h1 {
     letter-spacing: 0.5px;
 }
 section#first-main h1 span {
-    color: #c35411;
+    color: #b64d0e;
     display: block;
     font-size: 66px;
 }
@@ -657,7 +657,7 @@ section#first-main .flex-box {
 }
 
 a.logo span {
-    color: #c35411;
+    color: #b64d0e;
 }
 a.logo {
     font-family: "Druk Cyr";
@@ -764,7 +764,7 @@ a.logo {
 }
 .sr-price {
     font-size: 16px;
-    color: #c35411;
+    color: #b64d0e;
     font-weight: 600;
 }
 
@@ -1013,6 +1013,9 @@ section#blue-line {
 }
 
 
+#owl-star:not(.owl-loaded) .star-item:not(:first-child) {
+    display: none;
+}
 /* ---------- #testim-stars ----------- */
 section#testim-stars .star-item {
     background: #eff3f6;
@@ -1032,11 +1035,11 @@ section#testim-stars .photo-star img {
     margin: 0 auto;
     display: block;
 }
-section#testim-stars .photo-star h4 {
+section#testim-stars .photo-star h3 {
     text-align: center;
     margin-top: 15px;
     font-size: 29px;
-    color: #c35411;
+    color: #e8742b;
 }
 section#testim-stars .strar-box {
     margin: 0 auto;
@@ -1107,6 +1110,7 @@ section#about-us p span {
     height: calc(100% - 20px);
     margin-bottom: 15px;
     background: #dce3e7;
+    color: #000;
 }
 .order-box:hover {
     background: #c35411;
@@ -1142,6 +1146,7 @@ section#about-us p span {
     text-align: center;
     font-size: 32px;
     font-weight: 400;
+    color: #000;
     text-transform: uppercase;
 }
 .order-box p {
@@ -1282,7 +1287,7 @@ section#round-footer a.header-phone__link {
     font-weight: 700 !important;
 }
 section#round-footer .header-phone i {
-    color: #c35411;
+    color: #e8742b;
 }
 section#round-footer .header-phone__time {
     font-size: 0.8rem;
@@ -1317,6 +1322,9 @@ color: #fff;
 
 section#round-footer a.logo {
     color: #fff;
+}
+section#round-footer a.logo span {
+    color: #e8742b;
 }
 section#round-footer .write-us a.link-whtsapp {
 background: #00a884;
@@ -1380,7 +1388,7 @@ section#testim-stars {
     position: relative;
 }
 .thanks-block h1 {
-    color: #c35411;
+    color: #b64d0e;
     font-size: 60px;
     text-transform: uppercase;
 }
@@ -1450,4 +1458,29 @@ a.tellink {
 .order-box a {
     color: #000;
     font-weight: bold;
+}
+
+
+
+
+/* Ensure the stage uses flexbox */
+.owl-carousel .owl-stage {
+  display: flex;
+  display: -webkit-flex;
+}
+
+/* Ensure items stretch to full height */
+.owl-carousel .owl-item {
+  display: flex;
+  flex: 1 0 auto;
+padding: 0 5px;
+}
+
+/* Optional: Ensure content inside items also fills height */
+.owl-carousel .owl-item .item {
+  width: 100%;
+}
+
+.owl-theme .owl-dots .owl-dot span {
+    display: none !important;
 }

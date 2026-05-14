@@ -1,6 +1,6 @@
 /** Site behaviour — vanilla DOM (jQuery loads only when opening the Magnific gallery). */
 
-function loadScriptOnce(src) {
+export function loadScriptOnce(src) {
     return new Promise((resolve, reject) => {
         if (document.querySelector(`script[src="${src}"]`)) {
             resolve();
@@ -15,14 +15,20 @@ function loadScriptOnce(src) {
     });
 }
 
-const JQUERY_SLIM =
+const JQUERY_CDN =
     'https://code.jquery.com/jquery-3.7.1.slim.min.js';
 const MAGNIFIC_CSS =
     'https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.css';
 const MAGNIFIC_JS =
     'https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js';
+export const OWL_CAROUSEL_JS =
+    'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js';
+export const OWL_CAROUSEL_CSS =
+    'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css';
+export const OWL_THEME_CSS =
+    'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css';
 
-function loadCssOnce(href) {
+export function loadCssOnce(href) {
     return new Promise((resolve, reject) => {
         if (document.querySelector(`link[href="${href}"]`)) {
             resolve();
@@ -37,11 +43,11 @@ function loadCssOnce(href) {
     });
 }
 
-function ensureJQuery() {
+export function ensureJQuery() {
     if (window.jQuery) {
         return Promise.resolve();
     }
-    return loadScriptOnce(JQUERY_SLIM).then(() => {});
+    return loadScriptOnce(JQUERY_CDN).then(() => {});
 }
 
 let magnificReadyPromise = null;

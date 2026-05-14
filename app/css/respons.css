@@ -82,6 +82,7 @@
     }
     section#top-adress-2 a.logo img {
         width: 80px;
+        height: auto;
         margin-top: 5px;
     }
     .adress-icon svg,
@@ -163,10 +164,19 @@
     }
     section#round-footer .copy-box p, section#round-footer .copy-box a {
     text-align: center !important;
-    padding: 0px 0;
+    padding: 12px 0;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     }
     section#round-footer .header-phone {
         text-align: center;
+    }
+    section#round-footer .header-phone a {
+        display: inline-block;
+        padding: 8px 0;
+        min-height: 48px;
     }
     section#round-footer .header-phone__time {
         justify-content: center;
@@ -174,10 +184,11 @@
 
     /* Reduce mobile render work (helps TBT) for large below-the-fold sections. */
     section#why-us,
+    section#contact-box,
     section#magnific-gallery,
-    section#how-order,
-    section#round-footer {
-        contain-intrinsic-size: 1px 1200px;
+    section#testim-stars {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 1200px;
     }
     section#first-main h1 {
     text-transform: inherit;
@@ -366,10 +377,19 @@
     }
     section#round-footer .copy-box p, section#round-footer .copy-box a {
     text-align: center !important;
-    padding: 0px 0;
+    padding: 12px 0;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     }
     section#round-footer .header-phone {
         text-align: center;
+    }
+    section#round-footer .header-phone a {
+        display: inline-block;
+        padding: 8px 0;
+        min-height: 48px;
     }
     section#round-footer .header-phone__time {
         justify-content: center;
