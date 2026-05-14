@@ -5,6 +5,8 @@ const express = require('express');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { PurgeCSSPlugin } = require('purgecss-webpack-plugin');
+const glob = require('glob-all');
 const sharp = require('sharp');
 const webpack = require('webpack');
 
@@ -21,8 +23,8 @@ const APP_DIR = path.resolve(__dirname, 'app');
  */
 function emitMainWebpPlugin() {
     /** Slightly tighter compression on mobile hero sizes — improves LCP bytes (rebuild dist to regenerate WebPs). */
-    const webpOptsDefault = { quality: 72, effort: 4 };
-    const webpOptsMobile = { quality: 62, effort: 4 };
+    const webpOptsDefault = { quality: 68, effort: 5 };
+    const webpOptsMobile = { quality: 50, effort: 5 };
     const WIDTH_INTRINSIC = 728;
     const WIDTH_DESKTOP_MAX = 1200;
 
@@ -61,9 +63,19 @@ function emitMainWebpPlugin() {
                                     ? src.buffer()
                                     : Buffer.from(src.source());
 
+                            const buf384 = await resizeWebp(
+                                buffer,
+                                384,
+                                webpOptsMobile
+                            );
                             const buf480 = await resizeWebp(
                                 buffer,
                                 480,
+                                webpOptsMobile
+                            );
+                            const buf672 = await resizeWebp(
+                                buffer,
+                                672,
                                 webpOptsMobile
                             );
                             const buf728 = await resizeWebp(
@@ -76,8 +88,16 @@ function emitMainWebpPlugin() {
                             );
 
                             compilation.emitAsset(
+                                'img/main-384.webp',
+                                new webpack.sources.RawSource(buf384)
+                            );
+                            compilation.emitAsset(
                                 'img/main-480.webp',
                                 new webpack.sources.RawSource(buf480)
+                            );
+                            compilation.emitAsset(
+                                'img/main-672.webp',
+                                new webpack.sources.RawSource(buf672)
                             );
                             compilation.emitAsset(
                                 'img/main-728.webp',
@@ -209,15 +229,15 @@ module.exports = (env, argv) => {
                                   options: {
                                       encodeOptions: {
                                           jpeg: {
-                                              quality: 77,
+                                              quality: 68,
                                               mozjpeg: true,
                                               progressive: true,
                                           },
                                           png: {
                                               compressionLevel: 9,
-                                              quality: 78,
+                                              quality: 72,
                                           },
-                                          webp: { quality: 77, effort: 4 },
+                                          webp: { quality: 58, effort: 5 },
                                           gif: {},
                                           avif: { quality: 72 },
                                           tiff: { quality: 78 },
@@ -232,8 +252,8 @@ module.exports = (env, argv) => {
                                       options: {
                                           encodeOptions: {
                                               webp: {
-                                                  quality: 77,
-                                                  effort: 4,
+                                                  quality: 58,
+                                                  effort: 5,
                                               },
                                           },
                                       },
@@ -332,6 +352,68 @@ module.exports = (env, argv) => {
                 inject: 'body',
                 scriptLoading: 'defer',
             }),
+            ...(isProduction
+                ? [
+                      new PurgeCSSPlugin({
+                          paths: glob.sync(
+                              [
+                                  path.join(APP_DIR, '**/*.html'),
+                                  path.join(APP_DIR, '**/*.js'),
+                                  path.join(APP_DIR, '**/*.php'),
+                              ],
+                              { nodir: true }
+                          ),
+                          safelist: {
+                              standard: [
+                                  /^owl-/,
+                                  /^animated/,
+                                  /^fadeIn/,
+                                  /^fadeOut/,
+                                  /^show$/,
+                                  /^fixed$/,
+                                  /^active$/,
+                                  /^callback--open$/,
+                                  /^mfp-/,
+                                  /^magnif/,
+                                  /^col-/,
+                                  /^row/,
+                                  /^container/,
+                                  /^d-/,
+                                  /^flex-/,
+                                  /^text-/,
+                                  /^bg-/,
+                                  /^offset-/,
+                              ],
+                              greedy: [/fa-/, /fab/, /fas/, /far/],
+                          },
+                      }),
+                  ]
+                : []),
+            {
+                apply(compiler) {
+                    compiler.hooks.compilation.tap('FontPreloadPlugin', (compilation) => {
+                        const hooks = HtmlWebpackPlugin.getCompilationHooks(compilation);
+                        hooks.alterAssetTagGroups.tapAsync('FontPreloadPlugin', (data, cb) => {
+                            const fontAssets = Object.keys(compilation.assets)
+                                .filter(name => /^fonts\/(fa-solid-900|DrukCyr-Medium)\.[^.]+\.woff2$/.test(name));
+                            fontAssets.forEach(name => {
+                                data.headTags.unshift({
+                                    tagName: 'link',
+                                    voidTag: true,
+                                    attributes: {
+                                        rel: 'preload',
+                                        as: 'font',
+                                        type: 'font/woff2',
+                                        href: '/' + name,
+                                        crossorigin: 'anonymous',
+                                    },
+                                });
+                            });
+                            cb(null, data);
+                        });
+                    });
+                },
+            },
             emitMainWebpPlugin(),
         ],
 
