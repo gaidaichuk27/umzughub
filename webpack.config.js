@@ -316,6 +316,18 @@ module.exports = (env, argv) => {
                         to: '.',
                         noErrorOnMissing: true,
                     },
+                    {
+                        context: APP_DIR,
+                        from: 'robots.txt',
+                        to: '.',
+                        noErrorOnMissing: true,
+                    },
+                    {
+                        context: APP_DIR,
+                        from: 'sitemap.xml',
+                        to: '.',
+                        noErrorOnMissing: true,
+                    },
                 ],
             }),
             new MiniCssExtractPlugin({

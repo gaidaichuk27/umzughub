@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /thanks.php
+Disallow: /*.map
+
+Sitemap: https://umzughub.de/sitemap.xml
