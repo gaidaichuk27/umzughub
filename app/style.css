@@ -1484,3 +1484,37 @@ padding: 0 5px;
 .owl-theme .owl-dots .owl-dot span {
     display: none !important;
 }
+
+
+/* ---------- Privacy / Legal Pages ---------- */
+.privacy-content h2 {
+    font-size: 28px;
+    margin-top: 40px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #b64d0e;
+    color: #000;
+}
+.privacy-content h3 {
+    font-size: 20px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    color: #333;
+}
+.privacy-content ul {
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+.privacy-content ul li {
+    list-style: disc;
+    margin-bottom: 8px;
+    line-height: 27px;
+    font-size: 17px;
+}
+.privacy-content p {
+    margin-bottom: 15px;
+}
+.privacy-content a {
+    color: #b64d0e;
+    text-decoration: underline;
+}

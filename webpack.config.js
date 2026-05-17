@@ -21,8 +21,7 @@ const APP_DIR = path.resolve(__dirname, 'app');
 /**
  * After PNG is optimized, emit responsive WebPs for hero img srcset / LCP preloads.
  */
-function emitMainWebpPlugin() {
-    /** Slightly tighter compression on mobile hero sizes — improves LCP bytes (rebuild dist to regenerate WebPs). */
+function emitHeroWebpPlugin() {
     const webpOptsDefault = { quality: 68, effort: 5 };
     const webpOptsMobile = { quality: 50, effort: 5 };
     const WIDTH_INTRINSIC = 728;
@@ -39,74 +38,51 @@ function emitMainWebpPlugin() {
         return pipeline.webp(webpOpts).toBuffer();
     }
 
+    async function emitResponsiveWebps(compilation, srcAssetPath, outPrefix) {
+        const asset = compilation.getAsset(srcAssetPath);
+        if (!asset) {
+            return;
+        }
+        const src = asset.source;
+        const buffer =
+            typeof src.buffer === 'function'
+                ? src.buffer()
+                : Buffer.from(src.source());
+
+        const sizes = [
+            { w: 384,               opts: webpOptsMobile },
+            { w: 480,               opts: webpOptsMobile },
+            { w: 672,               opts: webpOptsMobile },
+            { w: WIDTH_INTRINSIC,   opts: webpOptsDefault },
+            { w: WIDTH_DESKTOP_MAX, opts: webpOptsDefault },
+        ];
+
+        await Promise.all(sizes.map(async ({ w, opts }) => {
+            const buf = await resizeWebp(buffer, w, opts);
+            compilation.emitAsset(
+                `img/${outPrefix}-${w}.webp`,
+                new webpack.sources.RawSource(buf)
+            );
+        }));
+    }
+
     return {
         apply(compiler) {
             compiler.hooks.thisCompilation.tap(
-                'EmitMainWebpPlugin',
+                'EmitHeroWebpPlugin',
                 (compilation) => {
                     compilation.hooks.processAssets.tapPromise(
                         {
-                            name: 'EmitMainWebpPlugin',
+                            name: 'EmitHeroWebpPlugin',
                             stage:
                                 webpack.Compilation
                                     .PROCESS_ASSETS_STAGE_OPTIMIZE_SIZE + 50,
                         },
                         async () => {
-                            const mainPng = 'img/main.png';
-                            const asset = compilation.getAsset(mainPng);
-                            if (!asset) {
-                                return;
-                            }
-                            const src = asset.source;
-                            const buffer =
-                                typeof src.buffer === 'function'
-                                    ? src.buffer()
-                                    : Buffer.from(src.source());
-
-                            const buf384 = await resizeWebp(
-                                buffer,
-                                384,
-                                webpOptsMobile
-                            );
-                            const buf480 = await resizeWebp(
-                                buffer,
-                                480,
-                                webpOptsMobile
-                            );
-                            const buf672 = await resizeWebp(
-                                buffer,
-                                672,
-                                webpOptsMobile
-                            );
-                            const buf728 = await resizeWebp(
-                                buffer,
-                                WIDTH_INTRINSIC
-                            );
-                            const buf1200 = await resizeWebp(
-                                buffer,
-                                WIDTH_DESKTOP_MAX
-                            );
-
-                            compilation.emitAsset(
-                                'img/main-384.webp',
-                                new webpack.sources.RawSource(buf384)
-                            );
-                            compilation.emitAsset(
-                                'img/main-480.webp',
-                                new webpack.sources.RawSource(buf480)
-                            );
-                            compilation.emitAsset(
-                                'img/main-672.webp',
-                                new webpack.sources.RawSource(buf672)
-                            );
-                            compilation.emitAsset(
-                                'img/main-728.webp',
-                                new webpack.sources.RawSource(buf728)
-                            );
-                            compilation.emitAsset(
-                                'img/main-1200.webp',
-                                new webpack.sources.RawSource(buf1200)
-                            );
+                            await Promise.all([
+                                emitResponsiveWebps(compilation, 'img/main.png', 'main'),
+                                emitResponsiveWebps(compilation, 'img/gallery-hero.png', 'gallery-hero'),
+                            ]);
                         }
                     );
                 }
@@ -352,6 +328,18 @@ module.exports = (env, argv) => {
                 inject: 'body',
                 scriptLoading: 'defer',
             }),
+            new HtmlWebpackPlugin({
+                template: path.join(APP_DIR, 'gallery.html'),
+                filename: 'gallery.html',
+                inject: 'body',
+                scriptLoading: 'defer',
+            }),
+            new HtmlWebpackPlugin({
+                template: path.join(APP_DIR, 'privacy-policy.html'),
+                filename: 'privacy-policy.html',
+                inject: 'body',
+                scriptLoading: 'defer',
+            }),
             ...(isProduction
                 ? [
                       new PurgeCSSPlugin({
@@ -414,7 +402,7 @@ module.exports = (env, argv) => {
                     });
                 },
             },
-            emitMainWebpPlugin(),
+            emitHeroWebpPlugin(),
         ],
 
         watchOptions: {
